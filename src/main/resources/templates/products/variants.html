@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head(title='Variações - ' + ${product.name})}"></head>
+<body>
+<header th:replace="~{fragments/layout :: header}"></header>
+<main class="container page">
+    <div class="page-header">
+        <div>
+            <span class="eyebrow">Catálogo</span>
+            <h1 th:text="${product.name}">Produto</h1>
+        </div>
+        <a class="button button-secondary" th:href="@{/products}">Voltar aos produtos</a>
+    </div>
+
+    <div th:if="${success}" class="alert alert-success" th:text="${success}"></div>
+    <div th:if="${error}" class="alert alert-error" th:text="${error}"></div>
+
+    <table class="data-table" th:if="${not #lists.isEmpty(product.variants)}">
+        <thead>
+            <tr>
+                <th>Variação</th>
+                <th>Estoque</th>
+                <th>Reservado</th>
+                <th>Disponível</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="variant : ${product.variants}">
+                <td th:text="${variant.label}"></td>
+                <td>
+                    <div class="stepper">
+                        <form th:action="@{'/products/' + ${product.id} + '/variants/' + ${variant.id} + '/stock/decrease'}" method="post">
+                            <input type="hidden" name="redirect" th:value="@{'/products/' + ${product.id} + '/variants'}" />
+                            <button type="submit" class="icon-btn icon-minus" aria-label="Diminuir estoque" title="Diminuir estoque">−</button>
+                        </form>
+                        <span th:text="${variant.stockQuantity}"></span>
+                        <form th:action="@{'/products/' + ${product.id} + '/variants/' + ${variant.id} + '/stock/increase'}" method="post">
+                            <input type="hidden" name="redirect" th:value="@{'/products/' + ${product.id} + '/variants'}" />
+                            <button type="submit" class="icon-btn icon-plus" aria-label="Aumentar estoque" title="Aumentar estoque">+</button>
+                        </form>
+                    </div>
+                </td>
+                <td>
+                    <div class="stepper">
+                        <form th:action="@{'/products/' + ${product.id} + '/variants/' + ${variant.id} + '/release'}" method="post">
+                            <input type="hidden" name="redirect" th:value="@{'/products/' + ${product.id} + '/variants'}" />
+                            <button type="submit" class="icon-btn icon-minus" aria-label="Liberar reserva" title="Liberar reserva">−</button>
+                        </form>
+                        <span th:text="${variant.reservedQuantity}"></span>
+                        <form th:action="@{'/products/' + ${product.id} + '/variants/' + ${variant.id} + '/reserve'}" method="post">
+                            <input type="hidden" name="redirect" th:value="@{'/products/' + ${product.id} + '/variants'}" />
+                            <button type="submit" class="icon-btn icon-plus" aria-label="Reservar peça" title="Reservar peça">+</button>
+                        </form>
+                        <span class="badge badge-reserved" th:if="${variant.reservedQuantity > 0}">Reservado</span>
+                    </div>
+                </td>
+                <td>
+                    <span th:text="${variant.availableQuantity}"></span>
+                    <span class="badge badge-low-stock" th:if="${variant.lowStock}">Estoque baixo</span>
+                </td>
+                <td>
+                    <div class="actions">
+                        <form th:action="@{'/products/' + ${product.id} + '/variants/' + ${variant.id} + '/delete'}" method="post"
+                              data-confirm="Você tem certeza que deseja remover esta variação?">
+                            <button type="submit" class="icon-btn icon-delete" aria-label="Remover variação" title="Remover variação">
+                                <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg>
+                            </button>
+                        </form>
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+
+    <h2 style="margin-top: 32px;">Adicionar variação</h2>
+    <form class="form" th:action="@{'/products/' + ${product.id} + '/variants'}" th:object="${variant}" method="post">
+        <div class="form-row">
+            <div class="field" th:if="${product.variesBySize}">
+                <label for="size">Tamanho</label>
+                <input id="size" type="text" th:field="*{size}" placeholder="P, M, G..." />
+                <span class="field-error" th:if="${#fields.hasErrors('size')}" th:errors="*{size}"></span>
+            </div>
+            <div class="field" th:if="${product.variesByColor}">
+                <label for="color">Cor</label>
+                <input id="color" type="text" th:field="*{color}" placeholder="Azul, Vermelho..." />
+                <span class="field-error" th:if="${#fields.hasErrors('color')}" th:errors="*{color}"></span>
+            </div>
+            <div class="field">
+                <label for="initialStock">Estoque inicial</label>
+                <input id="initialStock" type="number" min="0" th:field="*{initialStock}" />
+                <span class="field-error" th:if="${#fields.hasErrors('initialStock')}" th:errors="*{initialStock}"></span>
+            </div>
+        </div>
+        <div class="form-actions">
+            <button type="submit" class="button button-primary">Adicionar</button>
+        </div>
+    </form>
+</main>
+</body>
+</html>

@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head(title='Fechamento de Caixa')}"></head>
+<body>
+<header th:replace="~{fragments/layout :: header}"></header>
+<main class="container page page-narrow">
+    <div class="page-header">
+        <div>
+            <span class="eyebrow">Relatórios</span>
+            <h1>Fechamento de Caixa</h1>
+        </div>
+        <a class="button button-secondary" th:href="@{/reports}">Voltar</a>
+    </div>
+    <p class="text-soft">Confira se o que está no sistema bate com o que entrou de verdade.</p>
+
+    <form class="filter-bar" th:action="@{/reports/daily-cash}" method="get">
+        <input type="date" name="date" th:value="${report.date}" />
+        <button type="submit" class="button button-secondary">Ver</button>
+    </form>
+
+    <div class="stat-cards">
+        <div class="stat-card">
+            <div class="stat-card-label">Total vendido em <span th:text="${report.formattedDate}"></span></div>
+            <div class="stat-card-value" th:text="${report.formattedTotal}"></div>
+        </div>
+    </div>
+
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th>Forma de pagamento</th>
+                <th>Entrou</th>
+                <th>Onde conferir</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="line : ${report.lines}">
+                <td th:text="${line.paymentMethodLabel}"></td>
+                <td th:text="${line.formattedTotal}"></td>
+                <td class="text-soft" th:text="${line.checkHint}"></td>
+            </tr>
+        </tbody>
+    </table>
+
+    <p class="print-hint">Dica: use Ctrl+P e escolha "Salvar como PDF" pra guardar este relatório.</p>
+</main>
+</body>
+</html>

@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head(title='Produtos')}"></head>
+<body>
+<header th:replace="~{fragments/layout :: header}"></header>
+<main class="container page">
+    <div class="page-header">
+        <div>
+            <span class="eyebrow">Catálogo</span>
+            <h1>Produtos</h1>
+        </div>
+        <a class="button button-primary" th:href="@{/products/new}">+ Novo produto</a>
+    </div>
+
+    <div th:if="${success}" class="alert alert-success" th:text="${success}"></div>
+    <div th:if="${error}" class="alert alert-error" th:text="${error}"></div>
+
+    <form class="filter-bar" th:action="@{/products}" method="get">
+        <input type="text" name="search" placeholder="Buscar por nome" th:value="${search}" />
+        <select name="category">
+            <option value="">Todas as categorias</option>
+            <option th:each="cat : ${categories}" th:value="${cat}" th:text="${cat}"
+                    th:selected="${cat == category}"></option>
+        </select>
+        <label class="checkbox">
+            <input type="checkbox" name="lowStockOnly" value="true" th:checked="${lowStockOnly}" />
+            Somente estoque baixo
+        </label>
+        <button type="submit" class="button button-secondary">Filtrar</button>
+    </form>
+
+    <table class="data-table" th:if="${not #lists.isEmpty(products)}">
+        <thead>
+            <tr>
+                <th>Produto</th>
+                <th>Categoria</th>
+                <th>Preço pago</th>
+                <th>Preço total</th>
+                <th>Margem</th>
+                <th>Estoque</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="product : ${products}">
+                <td>
+                    <div class="product-name-cell">
+                        <img th:if="${product.photoUrl}" th:src="@{${product.photoUrl}}" class="photo-thumb" alt="" />
+                        <span th:unless="${product.photoUrl}" class="photo-placeholder">sem foto</span>
+                        <div>
+                            <div th:text="${product.name}"></div>
+                            <a th:if="${product.supplierId}" class="text-soft" th:href="@{'/suppliers/' + ${product.supplierId}}"
+                               th:text="'Fornecedor: ' + ${product.supplierName}"></a>
+                            <span class="badge badge-inactive" th:unless="${product.active}">Inativo</span>
+                        </div>
+                    </div>
+                </td>
+                <td th:text="${product.category}"></td>
+                <td th:text="${product.formattedCost}"></td>
+                <td th:text="${product.formattedSalePrice}"></td>
+                <td th:text="${product.formattedMargin}"></td>
+                <td>
+                    <span th:text="${product.totalAvailable} + ' disponível(is)'"></span>
+                    <span class="badge badge-low-stock" th:if="${product.lowStock}">Estoque baixo</span>
+                </td>
+                <td>
+                    <div class="actions">
+                        <div th:if="${not product.variesBySize and not product.variesByColor}" class="stepper">
+                            <form th:action="@{'/products/' + ${product.id} + '/variants/' + ${product.variants[0].id} + '/stock/decrease'}" method="post">
+                                <input type="hidden" name="redirect" th:value="@{/products(search=${search},category=${category},lowStockOnly=${lowStockOnly},page=${productPage.number})}" />
+                                <button type="submit" class="icon-btn icon-minus" aria-label="Diminuir estoque" title="Diminuir estoque">−</button>
+                            </form>
+                            <span th:text="${product.totalStock}"></span>
+                            <form th:action="@{'/products/' + ${product.id} + '/variants/' + ${product.variants[0].id} + '/stock/increase'}" method="post">
+                                <input type="hidden" name="redirect" th:value="@{/products(search=${search},category=${category},lowStockOnly=${lowStockOnly},page=${productPage.number})}" />
+                                <button type="submit" class="icon-btn icon-plus" aria-label="Aumentar estoque" title="Aumentar estoque">+</button>
+                            </form>
+                        </div>
+                        <a th:if="${product.variesBySize or product.variesByColor}" th:href="@{'/products/' + ${product.id} + '/variants'}">Ver variações</a>
+                        <a th:href="@{'/products/' + ${product.id} + '/edit'}" class="icon-btn icon-edit" aria-label="Editar" title="Editar">
+                            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4Z"></path></svg>
+                        </a>
+                        <form th:if="${product.active}" th:action="@{'/products/' + ${product.id} + '/deactivate'}" method="post">
+                            <input type="hidden" name="redirect" th:value="@{/products(search=${search},category=${category},lowStockOnly=${lowStockOnly},page=${productPage.number})}" />
+                            <button type="submit" class="link-danger">Desativar</button>
+                        </form>
+                        <form th:unless="${product.active}" th:action="@{'/products/' + ${product.id} + '/activate'}" method="post">
+                            <input type="hidden" name="redirect" th:value="@{/products(search=${search},category=${category},lowStockOnly=${lowStockOnly},page=${productPage.number})}" />
+                            <button type="submit" class="link-button">Reativar</button>
+                        </form>
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+
+    <div class="pagination" th:if="${productPage.totalPages > 1}">
+        <a th:if="${!productPage.first}" th:href="@{/products(page=${productPage.number - 1},search=${search},category=${category},lowStockOnly=${lowStockOnly})}" class="button button-secondary">Anterior</a>
+        <span class="pagination-info">Página <span th:text="${productPage.number + 1}"></span> de <span th:text="${productPage.totalPages}"></span></span>
+        <a th:if="${!productPage.last}" th:href="@{/products(page=${productPage.number + 1},search=${search},category=${category},lowStockOnly=${lowStockOnly})}" class="button button-secondary">Próxima</a>
+    </div>
+
+    <p class="empty-state" th:if="${#lists.isEmpty(products)}">Nenhum produto cadastrado ainda.</p>
+</main>
+</body>
+</html>

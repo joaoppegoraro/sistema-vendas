@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head(title='Vendas')}"></head>
+<body>
+<header th:replace="~{fragments/layout :: header}"></header>
+<main class="container page">
+    <div class="page-header">
+        <div>
+            <h1>Vendas</h1>
+        </div>
+        <a class="button button-primary" th:href="@{/sales/new}">+ Nova venda</a>
+    </div>
+
+    <div th:if="${success}" class="alert alert-success" th:text="${success}"></div>
+    <div th:if="${error}" class="alert alert-error" th:text="${error}"></div>
+
+    <form class="filter-bar" th:action="@{/sales}" method="get">
+        <label class="checkbox">Data
+            <input type="date" name="date" th:value="${date}" />
+        </label>
+        <label class="checkbox">Mês
+            <input type="month" name="month" th:value="${month}" />
+        </label>
+        <button type="submit" class="button button-secondary">Filtrar</button>
+        <a th:if="${date != null or month != null}" th:href="@{/sales}" class="button button-secondary">Limpar filtro</a>
+    </form>
+
+    <table class="data-table" th:if="${not #lists.isEmpty(sales)}">
+        <thead>
+            <tr>
+                <th>Data</th>
+                <th>Cliente</th>
+                <th>Pagamento</th>
+                <th>Total</th>
+                <th>Status</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="sale : ${sales}">
+                <td th:text="${sale.formattedSaleDate}"></td>
+                <td th:text="${sale.clientName} ?: 'Sem cliente'"></td>
+                <td th:text="${sale.paymentMethodLabel}"></td>
+                <td th:text="${sale.formattedTotal}"></td>
+                <td>
+                    <span class="badge badge-success" th:if="${sale.status.name() == 'COMPLETED'}" th:text="${sale.statusLabel}"></span>
+                    <span class="badge badge-low-stock" th:if="${sale.status.name() == 'CANCELLED'}" th:text="${sale.statusLabel}"></span>
+                </td>
+                <td>
+                    <div class="actions">
+                        <a th:href="@{'/sales/' + ${sale.id}}" class="icon-btn icon-view" aria-label="Ver venda" title="Ver venda">
+                            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7Z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                        </a>
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+
+    <div class="pagination" th:if="${salePage.totalPages > 1}">
+        <a th:if="${!salePage.first}" th:href="@{/sales(page=${salePage.number - 1},date=${date},month=${month})}" class="button button-secondary">Anterior</a>
+        <span class="pagination-info">Página <span th:text="${salePage.number + 1}"></span> de <span th:text="${salePage.totalPages}"></span></span>
+        <a th:if="${!salePage.last}" th:href="@{/sales(page=${salePage.number + 1},date=${date},month=${month})}" class="button button-secondary">Próxima</a>
+    </div>
+
+    <p class="empty-state" th:if="${#lists.isEmpty(sales)}">Nenhuma venda registrada ainda.</p>
+</main>
+</body>
+</html>

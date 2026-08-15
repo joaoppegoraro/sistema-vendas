@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head(title=${supplier.name})}"></head>
+<body>
+<header th:replace="~{fragments/layout :: header}"></header>
+<main class="container page">
+    <div class="page-header">
+        <div>
+            <span class="eyebrow">Cadastro</span>
+            <h1 th:text="${supplier.name}">Fornecedor</h1>
+        </div>
+        <div class="actions">
+            <a class="button button-secondary" th:href="@{/suppliers}">Voltar</a>
+            <a class="button button-primary" th:href="@{'/suppliers/' + ${supplier.id} + '/edit'}">Editar</a>
+        </div>
+    </div>
+
+    <div class="form">
+        <p>
+            <strong>CPF/CNPJ:</strong> <span th:text="${supplier.formattedDocument}"></span><br/>
+            <strong>E-mail:</strong> <span th:text="${supplier.email} ?: '-'"></span><br/>
+            <strong>Telefone:</strong> <span th:text="${supplier.phone} ?: '-'"></span>
+            <a th:if="${supplier.whatsAppUrl}" th:href="${supplier.whatsAppUrl}" target="_blank" rel="noopener" class="button button-secondary whatsapp-link">
+                <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M12.04 2c-5.46 0-9.9 4.44-9.9 9.9 0 1.75.46 3.45 1.32 4.95L2 22l5.25-1.38a9.9 9.9 0 0 0 4.79 1.22h.01c5.46 0 9.9-4.44 9.9-9.9S17.5 2 12.04 2zm0 18.1c-1.5 0-2.97-.4-4.25-1.16l-.3-.18-3.11.82.83-3.03-.2-.31a8.1 8.1 0 0 1-1.24-4.34c0-4.48 3.65-8.13 8.14-8.13a8.1 8.1 0 0 1 8.13 8.13c0 4.48-3.65 8.13-8.13 8.13h-.07z"/></svg>
+                Abrir WhatsApp
+            </a><br/>
+            <strong>Endereço:</strong> <span th:text="${supplier.address} ?: '-'"></span><br/>
+            <strong>Fornecedor desde:</strong> <span th:text="${#temporals.format(supplier.registrationDate, 'dd/MM/yyyy')}"></span>
+        </p>
+
+        <form th:action="@{'/suppliers/' + ${supplier.id} + '/delete'}" method="post"
+              data-confirm="Você tem certeza que deseja remover este fornecedor?">
+            <button type="submit" class="link-danger">Excluir fornecedor</button>
+        </form>
+    </div>
+
+    <h2 style="margin-top: 32px;">Produtos fornecidos</h2>
+    <table class="data-table" th:if="${not #lists.isEmpty(products)}">
+        <thead>
+            <tr>
+                <th>Produto</th>
+                <th>Categoria</th>
+                <th>Preço pago</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="product : ${products}">
+                <td th:text="${product.name}"></td>
+                <td th:text="${product.category}"></td>
+                <td th:text="${product.formattedCost}"></td>
+                <td>
+                    <a th:href="@{'/products/' + ${product.id} + '/edit'}" class="icon-btn icon-edit" aria-label="Editar" title="Editar">
+                        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4Z"></path></svg>
+                    </a>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <p class="empty-state" th:if="${#lists.isEmpty(products)}">Nenhum produto vinculado a este fornecedor ainda.</p>
+</main>
+</body>
+</html>

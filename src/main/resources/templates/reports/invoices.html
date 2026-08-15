@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head(title='Vendas a Faturar')}"></head>
+<body>
+<header th:replace="~{fragments/layout :: header}"></header>
+<main class="container page">
+    <div class="page-header">
+        <div>
+            <span class="eyebrow">Relatórios</span>
+            <h1>Vendas a Faturar</h1>
+        </div>
+        <a class="button button-secondary" th:href="@{/reports}">Voltar</a>
+    </div>
+    <p class="text-soft">Nome, CPF e itens de cada venda concluída no período, prontos pra copiar
+        na hora de emitir a nota fiscal.</p>
+
+    <form class="filter-bar" th:action="@{/reports/invoices}" method="get">
+        <label class="checkbox">Data
+            <input type="date" name="date" th:value="${date}" />
+        </label>
+        <label class="checkbox">Mês
+            <input type="month" name="month" th:value="${date == null} ? ${month} : null" />
+        </label>
+        <button type="submit" class="button button-secondary">Filtrar</button>
+        <a class="button button-primary"
+           th:href="@{/reports/sales/export(date=${date},month=${date == null} ? ${month} : null)}">Baixar CSV</a>
+    </form>
+
+    <div th:each="sale : ${sales}" class="form" style="margin-bottom: 16px;">
+        <p>
+            <strong>Venda #<span th:text="${sale.id}"></span></strong> — <span th:text="${sale.formattedSaleDate}"></span><br/>
+            <strong>Cliente:</strong> <span th:text="${sale.clientName} ?: 'Sem cliente'"></span>
+            <span th:if="${sale.clientCpf}"> — CPF: <span th:text="${sale.clientCpf}"></span></span><br/>
+            <strong>Total:</strong> <span th:text="${sale.formattedTotal}"></span>
+        </p>
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>Produto</th>
+                    <th>NCM</th>
+                    <th>Qtd.</th>
+                    <th>Unitário</th>
+                    <th>Subtotal</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="item : ${sale.items}">
+                    <td>
+                        <div th:text="${item.productName}"></div>
+                        <span class="text-soft" th:text="${item.variantLabel}"></span>
+                    </td>
+                    <td th:text="${item.ncm} ?: '-'"></td>
+                    <td th:text="${item.quantity}"></td>
+                    <td th:text="${item.formattedUnitPrice}"></td>
+                    <td th:text="${item.formattedSubtotal}"></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <p class="empty-state" th:if="${#lists.isEmpty(sales)}">Nenhuma venda concluída nesse período.</p>
+
+    <p class="print-hint">Dica: use Ctrl+P e escolha "Salvar como PDF" pra guardar este relatório.</p>
+</main>
+</body>
+</html>

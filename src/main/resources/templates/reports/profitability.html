@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head(title='Lucratividade Mensal')}"></head>
+<body>
+<header th:replace="~{fragments/layout :: header}"></header>
+<main class="container page page-narrow">
+    <div class="page-header">
+        <div>
+            <span class="eyebrow">Relatórios</span>
+            <h1>Lucratividade Mensal</h1>
+        </div>
+        <a class="button button-secondary" th:href="@{/reports}">Voltar</a>
+    </div>
+    <p class="text-soft">O faturamento bruto importa pro imposto, mas o que sobra depois de pagar
+        o custo das peças é o que importa pra você.</p>
+
+    <form class="filter-bar" th:action="@{/reports/profitability}" method="get">
+        <input type="month" name="month" th:value="${month}" />
+        <button type="submit" class="button button-secondary">Ver</button>
+    </form>
+
+    <h2 th:text="${report.monthLabel}"></h2>
+    <div class="stat-cards">
+        <div class="stat-card">
+            <div class="stat-card-label">Faturamento (Receita Bruta)</div>
+            <div class="stat-card-value" th:text="${report.formattedRevenue}"></div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-card-label">Custo das Peças Vendidas (CMV)</div>
+            <div class="stat-card-value" th:text="${report.formattedCost}"></div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-card-label">Lucro Bruto</div>
+            <div class="stat-card-value" th:text="${report.formattedProfit}"></div>
+        </div>
+    </div>
+
+    <p class="print-hint">Dica: use Ctrl+P e escolha "Salvar como PDF" pra guardar este relatório.</p>
+</main>
+</body>
+</html>

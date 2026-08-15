@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:fragment="head(title)">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title th:text="${title} + ' - Gestão do Vendedor'">Gestão do Vendedor</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@500;600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" th:href="@{/css/style.css}" />
+</head>
+<body>
+<th:block th:fragment="header">
+<header class="site-header">
+    <div class="container header-row">
+        <a class="brand" th:href="@{/}">Gestão do Vendedor</a>
+        <nav class="main-nav">
+            <a th:href="@{/products}">Produtos</a>
+            <a th:href="@{/sales}">Vendas</a>
+            <a th:href="@{/clients}">Clientes</a>
+            <a th:href="@{/suppliers}">Fornecedores</a>
+            <a th:href="@{/reports}">Relatórios</a>
+        </nav>
+    </div>
+</header>
+
+<div id="confirm-modal-overlay" class="modal-overlay" hidden>
+    <div class="modal-box">
+        <p id="confirm-modal-message"></p>
+        <div class="modal-actions">
+            <button type="button" id="confirm-modal-cancel" class="button button-secondary">Cancelar</button>
+            <button type="button" id="confirm-modal-confirm" class="button button-primary">Confirmar</button>
+        </div>
+    </div>
+</div>
+<script th:src="@{/js/confirm-modal.js}"></script>
+</th:block>
+</body>
+</html>

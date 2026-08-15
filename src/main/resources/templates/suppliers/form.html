@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head(title=(${supplier.id} != null ? 'Editar fornecedor' : 'Novo fornecedor'))}"></head>
+<body>
+<header th:replace="~{fragments/layout :: header}"></header>
+<main class="container page page-narrow">
+    <div class="page-header">
+        <div>
+            <span class="eyebrow">Cadastro</span>
+            <h1 th:text="${supplier.id} != null ? 'Editar fornecedor' : 'Novo fornecedor'">Novo fornecedor</h1>
+        </div>
+    </div>
+
+    <div th:if="${error}" class="alert alert-error" th:text="${error}"></div>
+
+    <form class="form"
+          th:action="${supplier.id} != null ? @{'/suppliers/' + ${supplier.id}} : @{/suppliers}"
+          th:object="${supplier}" method="post">
+
+        <input type="hidden" th:field="*{id}" />
+
+        <div class="field">
+            <label for="name">Nome / Razão social</label>
+            <input id="name" type="text" th:field="*{name}" />
+            <span class="field-error" th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></span>
+        </div>
+
+        <div class="field">
+            <label for="document">CPF ou CNPJ</label>
+            <input id="document" type="text" th:field="*{document}" placeholder="000.000.000-00 ou 00.000.000/0000-00" />
+            <span class="field-error" th:if="${#fields.hasErrors('document')}" th:errors="*{document}"></span>
+        </div>
+
+        <div class="field">
+            <label for="email">E-mail</label>
+            <input id="email" type="email" th:field="*{email}" />
+            <span class="field-error" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></span>
+        </div>
+
+        <div class="field">
+            <label for="phone">Telefone</label>
+            <input id="phone" type="text" th:field="*{phone}" placeholder="(00) 00000-0000" />
+            <span class="field-error" th:if="${#fields.hasErrors('phone')}" th:errors="*{phone}"></span>
+        </div>
+
+        <div class="field">
+            <label for="address">Endereço</label>
+            <input id="address" type="text" th:field="*{address}" />
+        </div>
+
+        <div class="form-actions">
+            <a class="button button-secondary" th:href="@{/suppliers}">Cancelar</a>
+            <button type="submit" class="button button-primary">Salvar</button>
+        </div>
+    </form>
+</main>
+</body>
+</html>

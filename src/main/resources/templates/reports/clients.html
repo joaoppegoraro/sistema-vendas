@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head(title='Análise de Clientes')}"></head>
+<body>
+<header th:replace="~{fragments/layout :: header}"></header>
+<main class="container page">
+    <div class="page-header">
+        <div>
+            <span class="eyebrow">Relatórios</span>
+            <h1>Análise de Clientes</h1>
+        </div>
+        <a class="button button-secondary" th:href="@{/reports}">Voltar</a>
+    </div>
+    <p class="text-soft">Quem mais compra, quem comprava com frequência e sumiu, e quem comprou
+        uma vez só e não voltou.</p>
+
+    <form class="filter-bar" th:action="@{/reports/clients}" method="get">
+        <label class="checkbox">Considerar "parado" após quantos dias sem comprar?
+            <input type="number" name="inactiveDays" th:value="${report.inactiveDays}" min="0" style="max-width: 100px;" />
+        </label>
+        <button type="submit" class="button button-secondary">Ver</button>
+    </form>
+
+    <h2>Top clientes</h2>
+    <table class="data-table" th:if="${not #lists.isEmpty(report.topClients)}">
+        <thead>
+            <tr>
+                <th>Cliente</th>
+                <th>Total gasto</th>
+                <th>Compras</th>
+                <th>Última compra</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="client : ${report.topClients}">
+                <td><a th:href="@{'/clients/' + ${client.clientId}}" th:text="${client.clientName}"></a></td>
+                <td th:text="${client.formattedTotalSpent}"></td>
+                <td th:text="${client.purchaseCount}"></td>
+                <td th:text="${client.formattedLastPurchaseDate}"></td>
+                <td>
+                    <a th:if="${client.whatsAppUrl}" th:href="${client.whatsAppUrl}" target="_blank" rel="noopener"
+                       class="button button-secondary whatsapp-link">WhatsApp</a>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <p class="empty-state" th:if="${#lists.isEmpty(report.topClients)}">Nenhuma venda concluída com cliente identificado ainda.</p>
+
+    <h2 style="margin-top: 32px;">Compravam bastante e pararam</h2>
+    <p class="text-soft">Duas ou mais compras, mas sem comprar de novo há pelo menos
+        <span th:text="${report.inactiveDays}"></span> dias.</p>
+    <table class="data-table" th:if="${not #lists.isEmpty(report.churnedClients)}">
+        <thead>
+            <tr>
+                <th>Cliente</th>
+                <th>Total gasto</th>
+                <th>Compras</th>
+                <th>Última compra</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="client : ${report.churnedClients}">
+                <td><a th:href="@{'/clients/' + ${client.clientId}}" th:text="${client.clientName}"></a></td>
+                <td th:text="${client.formattedTotalSpent}"></td>
+                <td th:text="${client.purchaseCount}"></td>
+                <td th:text="${client.formattedLastPurchaseDate}"></td>
+                <td>
+                    <a th:if="${client.whatsAppUrl}" th:href="${client.whatsAppUrl}" target="_blank" rel="noopener"
+                       class="button button-secondary whatsapp-link">WhatsApp</a>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <p class="empty-state" th:if="${#lists.isEmpty(report.churnedClients)}">Ninguém se encaixa nesse perfil com esse período.</p>
+
+    <h2 style="margin-top: 32px;">Compraram uma vez e não voltaram</h2>
+    <p class="text-soft">Só uma compra, há pelo menos <span th:text="${report.inactiveDays}"></span> dias.</p>
+    <table class="data-table" th:if="${not #lists.isEmpty(report.oneTimeClients)}">
+        <thead>
+            <tr>
+                <th>Cliente</th>
+                <th>Total gasto</th>
+                <th>Última (e única) compra</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="client : ${report.oneTimeClients}">
+                <td><a th:href="@{'/clients/' + ${client.clientId}}" th:text="${client.clientName}"></a></td>
+                <td th:text="${client.formattedTotalSpent}"></td>
+                <td th:text="${client.formattedLastPurchaseDate}"></td>
+                <td>
+                    <a th:if="${client.whatsAppUrl}" th:href="${client.whatsAppUrl}" target="_blank" rel="noopener"
+                       class="button button-secondary whatsapp-link">WhatsApp</a>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <p class="empty-state" th:if="${#lists.isEmpty(report.oneTimeClients)}">Ninguém se encaixa nesse perfil com esse período.</p>
+
+    <p class="print-hint">Dica: use Ctrl+P e escolha "Salvar como PDF" pra guardar este relatório.</p>
+</main>
+</body>
+</html>

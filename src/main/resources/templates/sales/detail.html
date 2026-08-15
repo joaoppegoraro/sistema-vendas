@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head(title='Venda #' + ${sale.id})}"></head>
+<body>
+<header th:replace="~{fragments/layout :: header}"></header>
+<main class="container page page-narrow">
+    <div class="page-header">
+        <div>
+            <span class="eyebrow">PDV</span>
+            <h1 th:text="'Venda #' + ${sale.id}">Venda</h1>
+        </div>
+        <a class="button button-secondary" th:href="@{/sales}">Voltar</a>
+    </div>
+
+    <div th:if="${success}" class="alert alert-success" th:text="${success}"></div>
+    <div th:if="${error}" class="alert alert-error" th:text="${error}"></div>
+
+    <div class="form">
+        <p>
+            <strong>Data:</strong> <span th:text="${sale.formattedSaleDate}"></span><br/>
+            <strong>Cliente:</strong> <span th:text="${sale.clientName} ?: 'Sem cliente'"></span><br/>
+            <strong>Forma de pagamento:</strong> <span th:text="${sale.paymentMethodLabel}"></span><br/>
+            <strong>Status:</strong>
+            <span class="badge badge-success" th:if="${sale.status.name() == 'COMPLETED'}" th:text="${sale.statusLabel}"></span>
+            <span class="badge badge-low-stock" th:if="${sale.status.name() == 'CANCELLED'}" th:text="${sale.statusLabel}"></span>
+        </p>
+
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>Produto</th>
+                    <th>Qtd.</th>
+                    <th>Unitário</th>
+                    <th>Subtotal</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="item : ${sale.items}">
+                    <td>
+                        <div th:text="${item.productName}"></div>
+                        <span class="text-soft" th:text="${item.variantLabel}"></span>
+                    </td>
+                    <td th:text="${item.quantity}"></td>
+                    <td th:text="${item.formattedUnitPrice}"></td>
+                    <td th:text="${item.formattedSubtotal}"></td>
+                </tr>
+            </tbody>
+        </table>
+
+        <p style="text-align: right;">
+            Desconto: <span th:text="${sale.formattedDiscount}"></span><br/>
+            Acréscimo: <span th:text="${sale.formattedSurcharge}"></span><br/>
+            <strong>Total: <span th:text="${sale.formattedTotal}"></span></strong>
+        </p>
+
+        <div class="form-actions" th:if="${sale.status.name() == 'COMPLETED'}">
+            <form th:action="@{'/sales/' + ${sale.id} + '/cancel'}" method="post"
+                  data-confirm="Você tem certeza que deseja cancelar esta venda? O estoque será devolvido.">
+                <button type="submit" class="link-danger">Cancelar venda</button>
+            </form>
+        </div>
+    </div>
+</main>
+</body>
+</html>

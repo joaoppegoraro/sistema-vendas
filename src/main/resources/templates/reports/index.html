@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head(title='Relatórios')}"></head>
+<body>
+<header th:replace="~{fragments/layout :: header}"></header>
+<main class="container page">
+    <div class="page-header">
+        <div>
+            <span class="eyebrow">Burocracia</span>
+            <h1>Relatórios</h1>
+        </div>
+    </div>
+    <p class="text-soft">Os números que você precisa pra declarar o seu IR, emitir nota, fechar o
+        caixa do dia e entender se está sobrando dinheiro no fim do mês.</p>
+
+    <div class="report-cards">
+        <a class="report-card" th:href="@{/reports/annual}">
+            <strong>Faturamento Anual</strong>
+            <span class="text-soft">Total do ano, dividido mês a mês — o número que vai na declaração de IR.</span>
+        </a>
+        <a class="report-card" th:href="@{/reports/invoices}">
+            <strong>Vendas a Faturar</strong>
+            <span class="text-soft">Dados da venda, do cliente e produtos  para emitir a nota fiscal.</span>
+        </a>
+        <a class="report-card" th:href="@{/reports/daily-cash}">
+            <strong>Fechamento de Caixa Diário</strong>
+            <span class="text-soft">Fluxo de caixa. Quanto entrou hoje em cada forma de pagamento, para conferência.</span>
+        </a>
+        <a class="report-card" th:href="@{/reports/profitability}">
+            <strong>Lucratividade Mensal</strong>
+            <span class="text-soft">Faturamento líquido, o que realmente sobrou no mês.</span>
+        </a>
+        <a class="report-card" th:href="@{/reports/clients}">
+            <strong>Análise de Clientes</strong>
+            <span class="text-soft">Quem mais compra, quem parou de comprar e quem comprou uma vez só.</span>
+        </a>
+    </div>
+</main>
+</body>
+</html>

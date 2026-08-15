@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head(title='Faturamento Anual')}"></head>
+<body>
+<header th:replace="~{fragments/layout :: header}"></header>
+<main class="container page page-narrow">
+    <div class="page-header">
+        <div>
+            <span class="eyebrow">Relatórios</span>
+            <h1>Faturamento Anual</h1>
+        </div>
+        <a class="button button-secondary" th:href="@{/reports}">Voltar</a>
+    </div>
+    <p class="text-soft">Some o faturamento bruto do ano inteiro — é esse número que vai na
+        declaração anual do MEI (DASN-SIMEI).</p>
+
+    <form class="filter-bar" th:action="@{/reports/annual}" method="get">
+        <input type="number" name="year" th:value="${year}" min="2000" max="2100" style="max-width: 140px;" />
+        <button type="submit" class="button button-secondary">Ver</button>
+    </form>
+
+    <h2 th:text="'Ano de ' + ${report.year}"></h2>
+
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th>Mês</th>
+                <th>Faturamento</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="month : ${report.months}">
+                <td th:text="${month.monthLabel}"></td>
+                <td th:text="${month.formattedTotal}"></td>
+            </tr>
+        </tbody>
+        <tfoot>
+            <tr>
+                <td><strong>Total do ano</strong></td>
+                <td><strong th:text="${report.formattedAnnualTotal}"></strong></td>
+            </tr>
+        </tfoot>
+    </table>
+
+    <p class="print-hint">Dica: use Ctrl+P e escolha "Salvar como PDF" pra guardar este relatório.</p>
+</main>
+</body>
+</html>

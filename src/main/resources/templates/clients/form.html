@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head(title=(${client.id} != null ? 'Editar cliente' : 'Novo cliente'))}"></head>
+<body>
+<header th:replace="~{fragments/layout :: header}"></header>
+<main class="container page page-narrow">
+    <div class="page-header">
+        <div>
+            <span class="eyebrow">Cadastro</span>
+            <h1 th:text="${client.id} != null ? 'Editar cliente' : 'Novo cliente'">Novo cliente</h1>
+        </div>
+    </div>
+
+    <div th:if="${error}" class="alert alert-error" th:text="${error}"></div>
+
+    <form class="form"
+          th:action="${client.id} != null ? @{'/clients/' + ${client.id}} : @{/clients}"
+          th:object="${client}" method="post">
+
+        <input type="hidden" th:field="*{id}" />
+
+        <div class="field">
+            <label for="name">Nome completo</label>
+            <input id="name" type="text" th:field="*{name}" />
+            <span class="field-error" th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></span>
+        </div>
+
+        <div class="field">
+            <label for="cpf">CPF</label>
+            <input id="cpf" type="text" th:field="*{cpf}" placeholder="000.000.000-00" />
+            <span class="field-error" th:if="${#fields.hasErrors('cpf')}" th:errors="*{cpf}"></span>
+        </div>
+
+        <div class="field">
+            <label for="email">E-mail</label>
+            <input id="email" type="email" th:field="*{email}" />
+            <span class="field-error" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></span>
+        </div>
+
+        <div class="field">
+            <label for="phone">Telefone</label>
+            <input id="phone" type="text" th:field="*{phone}" placeholder="(00) 00000-0000" />
+            <span class="field-error" th:if="${#fields.hasErrors('phone')}" th:errors="*{phone}"></span>
+        </div>
+
+        <div class="field">
+            <label for="address">Endereço</label>
+            <input id="address" type="text" th:field="*{address}" />
+        </div>
+
+        <div class="field">
+            <label for="birthDate">Data de nascimento</label>
+            <input id="birthDate" type="date" th:field="*{birthDate}" />
+            <span class="field-error" th:if="${#fields.hasErrors('birthDate')}" th:errors="*{birthDate}"></span>
+        </div>
+
+        <div class="form-actions">
+            <a class="button button-secondary" th:href="@{/clients}">Cancelar</a>
+            <button type="submit" class="button button-primary">Salvar</button>
+        </div>
+    </form>
+</main>
+</body>
+</html>

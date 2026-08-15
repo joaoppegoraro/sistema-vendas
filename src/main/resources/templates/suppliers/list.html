@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head(title='Fornecedores')}"></head>
+<body>
+<header th:replace="~{fragments/layout :: header}"></header>
+<main class="container page">
+    <div class="page-header">
+        <div>
+            <span class="eyebrow">Cadastro</span>
+            <h1>Fornecedores</h1>
+        </div>
+        <a class="button button-primary" th:href="@{/suppliers/new}">+ Novo fornecedor</a>
+    </div>
+
+    <div th:if="${success}" class="alert alert-success" th:text="${success}"></div>
+    <div th:if="${error}" class="alert alert-error" th:text="${error}"></div>
+
+    <form class="search" th:action="@{/suppliers}" method="get">
+        <input type="text" name="search" placeholder="Buscar por nome ou CPF/CNPJ" th:value="${search}" />
+        <button type="submit" class="button button-secondary">Buscar</button>
+    </form>
+
+    <table class="data-table" th:if="${not #lists.isEmpty(suppliers)}">
+        <thead>
+            <tr>
+                <th>Nome</th>
+                <th>CPF/CNPJ</th>
+                <th>Contato</th>
+                <th>Cadastro</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="supplier : ${suppliers}">
+                <td><a th:href="@{'/suppliers/' + ${supplier.id}}" th:text="${supplier.name}"></a></td>
+                <td th:text="${supplier.formattedDocument}"></td>
+                <td>
+                    <span th:text="${supplier.phone}"></span>
+                    <span class="text-soft" th:if="${supplier.email}" th:text="${supplier.email}"></span>
+                </td>
+                <td th:text="${#temporals.format(supplier.registrationDate, 'dd/MM/yyyy')}"></td>
+                <td>
+                    <div class="actions">
+                        <a th:href="@{'/suppliers/' + ${supplier.id} + '/edit'}" class="icon-btn icon-edit" aria-label="Editar" title="Editar">
+                            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4Z"></path></svg>
+                        </a>
+                        <form th:action="@{'/suppliers/' + ${supplier.id} + '/delete'}" method="post"
+                              data-confirm="Você tem certeza que deseja remover este fornecedor?">
+                            <button type="submit" class="icon-btn icon-delete" aria-label="Excluir" title="Excluir">
+                                <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg>
+                            </button>
+                        </form>
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+
+    <div class="pagination" th:if="${supplierPage.totalPages > 1}">
+        <a th:if="${!supplierPage.first}" th:href="@{/suppliers(page=${supplierPage.number - 1}, search=${search})}" class="button button-secondary">Anterior</a>
+        <span class="pagination-info">Página <span th:text="${supplierPage.number + 1}"></span> de <span th:text="${supplierPage.totalPages}"></span></span>
+        <a th:if="${!supplierPage.last}" th:href="@{/suppliers(page=${supplierPage.number + 1}, search=${search})}" class="button button-secondary">Próxima</a>
+    </div>
+
+    <p class="empty-state" th:if="${#lists.isEmpty(suppliers)}">Nenhum fornecedor cadastrado ainda.</p>
+</main>
+</body>
+</html>
