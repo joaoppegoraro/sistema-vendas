@@ -38,6 +38,7 @@ public class LimitedScopeFilter implements Filter {
     private boolean isAllowed(String path) {
         return path.startsWith("/clients") || path.startsWith("/suppliers")
                 || path.startsWith("/css") || path.startsWith("/js")
-                || path.startsWith("/h2-console") || path.equals("/favicon.ico");
+                || path.startsWith("/h2-console") || path.equals("/favicon.ico")
+                || path.equals("/login") || path.equals("/logout");
     }
 }

@@ -3,6 +3,16 @@
 
   var currencyFormatter = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' });
 
+  function csrfHeaders(extra) {
+    var tokenMeta = document.querySelector('meta[name="_csrf"]');
+    var headerMeta = document.querySelector('meta[name="_csrf_header"]');
+    var headers = extra || {};
+    if (tokenMeta && headerMeta) {
+      headers[headerMeta.content] = tokenMeta.content;
+    }
+    return headers;
+  }
+
   function parseDecimal(value) {
     var parsed = parseFloat(value);
     return isNaN(parsed) ? 0 : parsed;
@@ -61,7 +71,7 @@
 
     fetch('/sales/cart/items', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      headers: csrfHeaders({ 'Content-Type': 'application/x-www-form-urlencoded' }),
       body: params.toString()
     })
       .then(function (res) { return res.text(); })
@@ -70,7 +80,7 @@
   }
 
   function removeFromCart(variantId) {
-    fetch('/sales/cart/items/' + variantId + '/remove', { method: 'POST' })
+    fetch('/sales/cart/items/' + variantId + '/remove', { method: 'POST', headers: csrfHeaders() })
       .then(function (res) { return res.text(); })
       .then(replaceCartSection);
   }

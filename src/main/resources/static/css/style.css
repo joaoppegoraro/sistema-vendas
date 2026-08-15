@@ -35,9 +35,12 @@ h1, h2, h3 {
 .site-header { background: var(--paper-elevated); border-bottom: 1px solid var(--line); }
 .header-row { display: flex; align-items: center; justify-content: space-between; padding: 18px 24px; }
 .brand { font-family: 'Fraunces', serif; font-weight: 600; font-size: 1.1rem; color: var(--ink); text-decoration: none; }
-.main-nav { display: flex; gap: 6px; }
+.main-nav { display: flex; align-items: center; gap: 6px; }
 .main-nav a { color: #fff; background: var(--brass); text-decoration: none; font-weight: 600; font-size: .9rem; padding: 8px 16px; border-radius: 999px; border: 1px solid transparent; }
 .main-nav a:hover { background: var(--brass-dark); }
+.main-nav .logout-form { margin: 0; }
+.main-nav .link-button { color: #fff; background: var(--brass); font-weight: 600; font-size: .9rem; padding: 8px 16px; border-radius: 999px; }
+.main-nav .link-button:hover { background: var(--brass-dark); }
 
 .page { padding: 40px 24px 80px; }
 .page-narrow { max-width: 560px; }

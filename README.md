@@ -88,12 +88,27 @@ rather than on disk, for the same reason.
    - `DATABASE_URL=jdbc:postgresql://HOST/DBNAME?sslmode=require`
    - `DB_USERNAME=` (from the Neon connection string)
    - `DB_PASSWORD=` (from the Neon connection string)
+   - `APP_USERNAME=` and `APP_PASSWORD=` — login for the app itself (see below). Required: the
+     app refuses to start without `APP_PASSWORD`.
 
    `PORT` is set automatically by Render and is already wired up (`server.port=${PORT:8080}`).
    Tables are created automatically on first boot (`ddl-auto=update`), same as local H2.
 
 Free-tier caveat: Render's free web services sleep after 15 minutes of inactivity; the first request
 after that takes ~30–50s to wake up. Fine for a single-user tool, noticeable if you're not expecting it.
+
+## Login
+
+The whole app sits behind a single account (see `SecurityConfig`) — it holds real client/supplier
+data at a public URL. There's one user, no self-registration, no roles. Credentials come from
+`APP_USERNAME` (defaults to `vendedora`) and `APP_PASSWORD` (no default — the app won't boot
+without it, so a real password is never committed to the repo). To run locally, export it first:
+
+```bash
+# PowerShell
+$env:APP_PASSWORD="your-local-password"
+java -jar target/sales-system-0.0.1-SNAPSHOT.jar
+```
 
 ## Next steps (Project 2)
 
