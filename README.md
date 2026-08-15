@@ -71,24 +71,29 @@ Since the project doesn't require prior front-end knowledge, Thymeleaf allows bu
 plain HTML processed by Spring Boot itself — no need to learn a separate JavaScript ecosystem. All the
 learning effort stays focused on Java/Spring, which is the focus of the course.
 
-## Switching from H2 to PostgreSQL or MySQL (for deployment)
+## Deployment (free tier: Neon + Render)
 
-1. In `pom.xml`, replace the H2 dependency with:
-```xml
-<dependency>
-    <groupId>org.postgresql</groupId>
-    <artifactId>postgresql</artifactId>
-    <scope>runtime</scope>
-</dependency>
-```
-2. In `application.properties`, replace the `spring.datasource` lines with:
-```properties
-spring.datasource.url=jdbc:postgresql://localhost:5432/sales_notebook
-spring.datasource.driver-class-name=org.postgresql.Driver
-spring.datasource.username=YOUR_USER
-spring.datasource.password=YOUR_PASSWORD
-```
-No other code changes are necessary — that's the advantage of using Spring Data JPA.
+Local development is untouched — it still runs on H2 with `java -jar` as described above. Deployment
+uses a separate Spring profile (`application-prod.properties`) that switches to a managed Postgres
+database, since free hosting tiers typically have no persistent disk (an H2 file would be wiped on
+every restart). Product photos are stored as bytes in the database itself (`Product.photoData`)
+rather than on disk, for the same reason.
+
+1. **Database — [Neon](https://neon.tech) (free Postgres)**: create a project, copy the connection
+   string it gives you (`postgresql://USER:PASSWORD@HOST/DBNAME?sslmode=require`).
+2. **Push this repo to GitHub** (Render deploys from a Git repo).
+3. **Web service — [Render](https://render.com)**: New → Web Service → connect the GitHub repo.
+   Render auto-detects the `Dockerfile`. Set these environment variables:
+   - `SPRING_PROFILES_ACTIVE=prod`
+   - `DATABASE_URL=jdbc:postgresql://HOST/DBNAME?sslmode=require`
+   - `DB_USERNAME=` (from the Neon connection string)
+   - `DB_PASSWORD=` (from the Neon connection string)
+
+   `PORT` is set automatically by Render and is already wired up (`server.port=${PORT:8080}`).
+   Tables are created automatically on first boot (`ddl-auto=update`), same as local H2.
+
+Free-tier caveat: Render's free web services sleep after 15 minutes of inactivity; the first request
+after that takes ~30–50s to wake up. Fine for a single-user tool, noticeable if you're not expecting it.
 
 ## Next steps (Project 2)
 
