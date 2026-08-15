@@ -12,13 +12,13 @@
 <th:block th:fragment="header">
 <header class="site-header">
     <div class="container header-row">
-        <a class="brand" th:href="@{/}">Gestão do Vendedor</a>
+        <a class="brand" th:href="@{${limitedScope} ? '/clients' : '/'}">Gestão do Vendedor</a>
         <nav class="main-nav">
-            <a th:href="@{/products}">Produtos</a>
-            <a th:href="@{/sales}">Vendas</a>
+            <a th:unless="${limitedScope}" th:href="@{/products}">Produtos</a>
+            <a th:unless="${limitedScope}" th:href="@{/sales}">Vendas</a>
             <a th:href="@{/clients}">Clientes</a>
             <a th:href="@{/suppliers}">Fornecedores</a>
-            <a th:href="@{/reports}">Relatórios</a>
+            <a th:unless="${limitedScope}" th:href="@{/reports}">Relatórios</a>
         </nav>
     </div>
 </header>
