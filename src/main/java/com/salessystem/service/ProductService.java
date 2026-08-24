@@ -59,9 +59,12 @@ public class ProductService {
     @Transactional(readOnly = true)
     public Page<ProductResponseDTO> list(String search, String category, boolean lowStockOnly, int page) {
         Pageable pageable = PageRequest.of(Math.max(page, 0), PAGE_SIZE, Sort.by(Sort.Direction.ASC, "name"));
-        String normalizedSearch = (search == null || search.isBlank()) ? null : search;
+        // Building the "%term%" pattern here (instead of via LOWER(CONCAT(...)) in JPQL) avoids a
+        // Postgres quirk: with a nullable bind parameter reused inside CONCAT/lower(), its type
+        // inference can resolve to bytea instead of text, breaking lower() at runtime.
+        String searchPattern = (search == null || search.isBlank()) ? null : "%" + search.toLowerCase() + "%";
         String normalizedCategory = (category == null || category.isBlank()) ? null : category;
-        Page<Product> result = repository.search(normalizedSearch, normalizedCategory, lowStockOnly, pageable);
+        Page<Product> result = repository.search(searchPattern, normalizedCategory, lowStockOnly, pageable);
         return result.map(mapper::toResponseDto);
     }
 

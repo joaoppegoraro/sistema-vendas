@@ -15,7 +15,7 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
 
     @Query("""
             SELECT DISTINCT p FROM Product p
-            WHERE (:search IS NULL OR LOWER(p.name) LIKE LOWER(CONCAT('%', :search, '%')))
+            WHERE (:search IS NULL OR LOWER(p.name) LIKE :search)
             AND (:category IS NULL OR p.category = :category)
             AND (:lowStockOnly = false OR EXISTS (
                  SELECT 1 FROM ProductVariant v
