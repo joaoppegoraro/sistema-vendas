@@ -14,13 +14,13 @@
 <th:block th:fragment="header">
 <header class="site-header">
     <div class="container header-row">
-        <a class="brand" th:href="@{${limitedScope} ? '/clients' : '/'}">Gestão do Vendedor</a>
+        <a class="brand" th:href="@{${visibleModules.contains('dashboard')} ? '/' : '/clients'}">Gestão do Vendedor</a>
         <nav class="main-nav">
-            <a th:unless="${limitedScope}" th:href="@{/products}">Produtos</a>
-            <a th:unless="${limitedScope}" th:href="@{/sales}">Vendas</a>
+            <a th:if="${visibleModules.contains('products')}" th:href="@{/products}">Produtos</a>
+            <a th:if="${visibleModules.contains('sales')}" th:href="@{/sales}">Vendas</a>
             <a th:href="@{/clients}">Clientes</a>
             <a th:href="@{/suppliers}">Fornecedores</a>
-            <a th:unless="${limitedScope}" th:href="@{/reports}">Relatórios</a>
+            <a th:if="${visibleModules.contains('reports')}" th:href="@{/reports}">Relatórios</a>
             <form th:action="@{/logout}" method="post" class="logout-form">
                 <button type="submit" class="link-button">Sair</button>
             </form>

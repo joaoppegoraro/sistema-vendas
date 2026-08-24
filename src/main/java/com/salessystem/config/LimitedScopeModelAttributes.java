@@ -1,18 +1,22 @@
 package com.salessystem.config;
 
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ModelAttribute;
 
-/** Exposes app.limited-scope to every template, so layout.html can hide the extra nav links. */
+import java.util.List;
+
+/** Exposes app.visible-modules to every template, so layout.html can show/hide each nav link. */
 @ControllerAdvice
 public class LimitedScopeModelAttributes {
 
-    @Value("${app.limited-scope:false}")
-    private boolean limitedScope;
+    private final VisibleModules visibleModules;
 
-    @ModelAttribute("limitedScope")
-    public boolean limitedScope() {
-        return limitedScope;
+    public LimitedScopeModelAttributes(VisibleModules visibleModules) {
+        this.visibleModules = visibleModules;
+    }
+
+    @ModelAttribute("visibleModules")
+    public List<String> visibleModules() {
+        return visibleModules.asList();
     }
 }
